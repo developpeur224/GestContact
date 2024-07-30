@@ -16,7 +16,7 @@
 				<div class="container-fluid">
 					{% if app.user %}
 						<span class="navbar-brand" id="profil">
-							<i class="fas fa-user-secret"></i>
+						<img width="35px" height="35px" src="{{ asset('images/profiles/' ~ (app.user.imageName is not null ? app.user.imageName : 'profile.png')) }}" class="rounded-circle">
 							{{app.user.nom}}
 						</span>
 					{% else %}
@@ -25,6 +25,7 @@
 							CONTACT
 						</a>
 					{% endif %}
+					
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
