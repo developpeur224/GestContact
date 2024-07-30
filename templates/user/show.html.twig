@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Utilisateur
+{% endblock %}
+
+{% block body %}
+	
+    <div class="container mt-5">
+			<div class="container-content">
+				<div class="container-header">
+					<h5 class="container-title text-center">Détails de l'Utilisateur</h5>
+				</div>
+				<div class="container-body">
+					<div class="container">
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Identifiant :</strong>
+							</div>
+							<div class="col-md-8">{{user.id}}</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Nom :</strong>
+							</div>
+							<div class="col-md-8">{{user.nom}}</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Prénom :</strong>
+							</div>
+							<div class="col-md-8">{{user.prenom}}</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Email :</strong>
+							</div>
+							<div class="col-md-8">{{user.email}}</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Téléphone :</strong>
+							</div>
+							<div class="col-md-8">{{user.telephone}}</div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Roles :</strong>
+							</div>
+							<div class="col-md-8">{{user.roles ? user.roles[0]|json_encode == 'ROLE_USER' ? 'User': 'Admin': '' }}</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+{% endblock %}

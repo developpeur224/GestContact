@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs
+{% endblock %}
+
+{% block body %}
+
+	<section class="container py-5">
+		<div class="row">
+			<div class="col-lg-8 col-sm mb-5 mx-auto">
+				<h1 class="fs-4 text-center lead text-primary">
+					GESTION DES USERS</h1>
+			</div>
+		</div>
+		<div class="dropdown-divider border-warning"></div>
+		<div class="row">
+			<div class="col-md-6">
+				<h5 class="fw-bold mb-0 text-center">Listes des Utilisateurs</h5>
+			</div>
+			<div class="col-md-6">
+				<div class="d-flex justify-content-end">
+					<a href="{{path('app_user_new')}}" class="btn btn-primary btn-sm me-3">
+						<i class="fas fa-folder-plus me-1"></i>Ajouter</a>
+				</div>
+			</div>
+		</div>
+		<div class="dropdown-divider border-warning"></div>
+		<div class="row">
+			<div class="table-responsive" id="orderTable">
+				{% if users %}
+					<table id="usersTable" class="table table-striped">
+						<thead>
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Image</th>
+								<th scope="col">Nom</th>
+								<th scope="col">Prénom</th>
+								<th scope="col">Email</th>
+								<th scope="col">Telephone</th>
+								<th scope="col" class="text-center">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for user in users %}
+								<tr class="element" data-id="{{ user.id }}">
+									<td data-id="{{ user.id }}">{{ loop.index }}</td>
+									<td class="text-center d-flex justify-content-center align-items-center">
+										<img width="50px" height="50px" src="{{ asset('images/profiles/' ~ (user.imageName is not null ? user.imageName : 'profile.png')) }}" class="rounded-circle">
+									</td>
+									<td>{{ user.nom }}</td>
+									<td>{{ user.prenom }}</td>
+									<td>{{ user.email }}</td>
+									<td>{{ user.telephone }}</td>
+									{% if app.user.email != user.email %}
+										<td class="text-center">
+											<a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-primary btn-sm me-2" title="Voir détails">
+												<i class="fas fa-eye"></i>
+											</a>
+											<a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-info btn-sm me-2" title="Modifier">
+												<i class="fas fa-edit"></i>
+											</a>
+											<a href="#" class="btn btn-danger btn-sm me-2 deleteUserBtn" data-id="{{ user.id }}" data-toggle="modal" title="Supprimer">
+												<i class="fas fa-trash-alt"></i>
+											</a>
+										</td>
+									{% else %}
+										<td class="text-center">
+											<span class="badge bg-success badge-custom" style="font-size: 0.875rem; padding: 0.5rem 1rem; border-radius: 0.25rem; color: #fff;">Connecté</span>
+										</td>
+									{% endif %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+				{% else %}
+					<h3 class="text-center text-success">
+						Aucun Utilisateur !</h3>
+				{% endif %}
+
+			</div>
+		</div>
+
+	</section>
+
+{% endblock %}

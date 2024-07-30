@@ -1,0 +1,319 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Contacts
+{% endblock %}
+
+{% block stylesheets %}
+	<style>
+		.table th,
+		.table td {
+			vertical-align: middle;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<section class="container py-5">
+	<span class="d-none" id="roles">{{app.user.roles[0]}}</span>
+		<div class="row">
+			<div class="col-lg-8 col-sm mb-5 mx-auto">
+				<h1 class="fs-4 text-center lead text-primary">
+					GESTION DES CONTACTS</h1>
+			</div>
+		</div>
+		<div class="dropdown-divider border-warning"></div>
+		<div class="row">
+			<div class="col-md-6">
+				<h5 class="fw-bold mb-0 text-center">Listes des Contacts</h5>
+			</div>
+			<div class="col-md-6">
+				<div class="d-flex justify-content-end">
+					<button class="btn btn-secondary btn-sm me-3" data-bs-toggle="modal" data-bs-target="#NousContactezModal">
+						<i class="fas fa-solid fa-phone  me-1"></i>Nous Contactez !</button>
+					<button class="btn btn-primary btn-sm me-3" data-bs-toggle="modal" data-bs-target="#addContactModal">
+						<i class="fas fa-folder-plus me-1"></i>Nouveau</button>
+				</div>	
+			</div>
+		</div>
+		<div class="dropdown-divider border-warning"></div>
+		<div class="row">
+			<div class="table-responsive" id="orderTable">
+			{% if contacts %}
+				<table class="table table-striped" id="contactsTable">
+					<thead>
+						<tr>
+							<th scope="col">ID</th>
+							<th scope="col">Nom</th>
+							<th scope="col">Prénom</th>
+							<th scope="col">Email</th>
+							<th scope="col">Telephone</th>
+							<th scope="col">Adresse</th>
+							<th scope="col">Catégorie</th>
+							<th scope="col">Actions</th>
+						</tr>
+					</thead>
+					<tbody id="contactsTableBody">
+						{% for contact in contacts %}
+							<tr class="element" data-id="{{ contact.id }}">
+								<td data-id="{{ contact.id }}" class="idContact">{{ loop.index }}</td>
+								<td class="nomContact">{{ contact.nom }}</td>
+								<td class="prenomContact">{{ contact.prenom }}</td>
+								<td class="telephoneContact">{{ contact.telephone }}</td>
+								<td class="emailContact">{{ contact.email }}</td>
+								<td class="addressContact">{{ contact.address }}</td>
+								<td class="categorieContact">{{ contact.categorie.nom }}</td>
+								<td>
+									<a href="#" class="btn btn-primary btn-sm me-2 infoBtn" data-bs-toggle="modal" data-bs-target="#ViewContactModal" title="Voir détails">
+										<i class="fas fa-eye"></i>
+									</a>
+									{% if is_granted('ROLE_ADMIN') %}
+										<a href="#" class="btn btn-danger btn-sm me-2 deleteBtn" data-id="{{ contact.id }}" data-toggle="modal" title="Supprimer">
+											<i class="fas fa-trash-alt"></i>
+										</a>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% else %}
+				<h3 class="text-center text-success"> Aucun Contact !</h3>
+			{% endif %}
+				
+			</div>
+		</div>
+
+	</section>
+
+
+	<!--Ajouter Modal -->
+	<div class="modal fade" id="addContactModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Nouveau Contact</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ form_start(form, {'attr': {'action': '', 'id': 'formAddOrder', 'method': 'post', 'novalidate': 'novalidate'}}) }}
+						<div class="form-floating mb-3">
+							{{ form_widget(form.nom, {'attr': {'class': 'form-control', 'id': 'nom', 'required': true}}) }}
+							<label for="nom">Nom</label>
+						</div>
+						<div class="form-floating mb-3">
+							{{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'id': 'prenom', 'required': true}}) }}
+							<label for="prenom">Prénom</label>
+						</div>
+						<div class="row g-2 mb-3">
+							<div class="col-md">
+								<div class="form-floating mb-3">
+									{{ form_widget(form.email, {'attr': {'class': 'form-control', 'id': 'email', 'required': true}}) }}
+									<label for="email">Email</label>
+								</div>
+							</div>
+							<div class="col-md">
+								<div class="form-floating mb-3">
+									{{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'id': 'telephone', 'required': true}}) }}
+									<label for="telephone">Telephone</label>
+								</div>
+							</div>
+							<div class="col-md">
+								<div class="form-floating mb-3">
+									{{ form_widget(form.address, {'attr': {'class': 'form-control', 'id': 'address', 'required': true}}) }}
+									<label for="address">Address</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-floating mb-3">
+							{{ form_widget(form.categorie, {'attr': {'class': 'form-select', 'id': 'categorie', 'required': true}}) }}
+							<label for="categorie">Categorie</label>
+						</div>
+					{{ form_end(form) }}
+				</div>
+				<div class="modal-footer d-flex justify-content-between">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+					<button type="button" class="btn btn-primary" name="create" id="create">Ajouter
+						<i id="iconAdd" class="fas fa-plus"></i>
+						<span id="addSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modifier Modal -->
+	<div class="modal fade" id="UpdateContactModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title text-center">Modifier Contact</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form action="" method="post" id="formUpdateOrder" novalidate>
+						<div class="form-floating mb-3">
+							<input type="hidden" class="form-control idUpdate" id="idUpdate" name="id">
+							<input type="text" class="form-control" id="nomUpdate" name="nom" required>
+							<label for="nom">Nom</label>
+						</div>
+						<div class="form-floating mb-3">
+							<input type="text" class="form-control" id="prenomUpdate" name="prenom" required>
+							<label for="prenom">Prénom</label>
+						</div>
+						<div class="row g-2 mb-3">
+							<div class="col-md">
+								<div class="form-floating mb-3">
+									<input type="email" class="form-control" id="emailUpdate" name="email" required>
+									<label for="email">Email</label>
+								</div>
+							</div>
+							<div class="col-md">
+								<div class="form-floating mb-3">
+									<input type="text" class="form-control" id="telephoneUpdate" name="telephone" required>
+									<label for="telephone">Telephone</label>
+								</div>
+							</div>
+							<div class="col-md">
+								<div class="form-floating mb-3">
+									<input type="text" class="form-control" id="addressUpdate" name="address" required>
+									<label for="address">Address</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-floating mb-3">
+							<select class="form-select" id="categorieUpdate" name="categorie" required>
+								{% for categorie in categories %}
+									<option value="{{ categorie.id }}">{{ categorie.nom }}</option>
+								{% endfor %}
+							</select>
+							<label for="categorieUpdate">Catégorie</label>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer d-flex justify-content-between">
+					<button type="button" class="btn btn-danger retour" data-bs-dismiss="modal">
+						<i class="fa fa-arrow-left"></i>
+						Retour
+					</button>
+					<button type="button" class="btn btn-primary update" name="update" id="update">
+						Mettre à jour
+						<i id="iconSync" class="fas fa-sync"></i>
+						<span id="updateSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+					</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	{# Afficher detail contact Modal #}
+	<div class="modal fade" id="ViewContactModal" tabindex="-1" aria-labelledby="ViewModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ViewModalLabel">Fiche du Contact</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="container">
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Identifiant :</strong>
+							</div>
+							<div class="col-md-8 idView"></div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Nom :</strong>
+							</div>
+							<div class="col-md-8 nomView"></div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Prénom :</strong>
+							</div>
+							<div class="col-md-8 prenomView"></div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Email :</strong>
+							</div>
+							<div class="col-md-8 emailView"></div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Téléphone :</strong>
+							</div>
+							<div class="col-md-8 telephoneView"></div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Adresse :</strong>
+							</div>
+							<div class="col-md-8 addressView"></div>
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-4">
+								<strong>Catégorie :</strong>
+							</div>
+							<div class="col-md-8 categorieView"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-between">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+						<i class="fas fa-close"></i>
+						Fermer
+					</button>
+					<button type="button" class="btn btn-primary editBtn" name="view" id="view" data-bs-toggle="modal" data-bs-target="#UpdateContactModal">
+						Modifier
+						<i class="fas fa-edit"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Nous Contactez Modal -->
+	<div class="modal fade" id="NousContactezModal" tabindex="-1" aria-labelledby="contactezModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title text-center">Contactez-Nous ?</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ form_start(formDTO, {'attr': {'action': path('app.sendEmail'), 'id': 'formNousContactezOrder', 'method': 'post', 'novalidate': 'novalidate'}}) }}
+						<div class="form-floating mb-3">
+							{{ form_widget(formDTO.titre, {'attr': {'class': 'form-control'}}) }}
+							<label for="titre">Titre ?</label>
+						</div>
+						<div class="form-floating mb-3">
+							{{ form_widget(formDTO.choiceType, {'attr': {'class': 'form-select'}}) }}
+							<label for="choiceType">Quel type de question ? </label>
+						</div>
+						<div class="form-floating mb-3">
+							{{ form_widget(formDTO.description, {'attr': {'class': 'form-control'}}) }}
+							<label for="description">Description</label>
+						</div>
+					{{ form_end(formDTO) }}
+				</div>
+				<div class="modal-footer d-flex justify-content-between">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+						<i class="fa fa-close"></i>
+						Fermer
+					</button>
+					<button type="button" class="btn btn-primary contactNous" id="contactNous">
+						Contactez
+						<i id="iconPhone" class="fas fa-solid fa-phone"></i>
+						<span id="contactNousSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+					</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+{% endblock %}

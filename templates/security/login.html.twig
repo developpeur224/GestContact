@@ -1,0 +1,174 @@
+{# {% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+<div class="container bg-secondary m-5 p-5 w-75">
+<form method="post">
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="mb-3">
+            Vous êtes connecté avec {{ app.user.userIdentifier }}, <a class="btn btn-danger btn-sm" href="{{ path('app_logout') }}">Déconnexion</a>
+        </div>
+    {% endif %}
+     
+     
+    <h1 class="h3 mb-3 font-weight-normal text-center text-white">CONNEXION</h1>
+    <div class="form-floating mb-3">
+    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+    <label for="inputEmail">Email</label>
+    </div>
+    <div class="form-floating mb-3">
+    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+    <label for="inputPassword">Password</label>
+    </div>
+    
+
+    <input type="hidden" name="_csrf_token"
+           value="{{ csrf_token('authenticate') }}"
+    >
+    <div class="d-flex justify-content-center align-items-center">
+    <button class="btn btn-lg btn-primary" type="submit">
+       Connexion
+    </button>
+    </div>
+    
+</form>
+</div>
+
+{% endblock %} #}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+	<head>
+		<title>Login à Contact !</title>
+		<meta charset="UTF-8">
+		<meta
+		name="viewport" content="width=device-width, initial-scale=1">
+		<!--===============================================================================================-->
+		<link
+		rel="icon" type="image/png" href="{{asset("images/icons/favicon.ico")}}"/>
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("vendor/bootstrap/css/bootstrap.min.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("fonts/font-awesome-4.7.0/css/font-awesome.min.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("fonts/Linearicons-Free-v1.0.0/icon-font.min.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("vendor/animate/animate.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("vendor/css-hamburgers/hamburgers.min.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("vendor/animsition/css/animsition.min.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("vendor/select2/select2.min.css")}}">
+		<!--===============================================================================================-->
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("vendor/daterangepicker/daterangepicker.css")}}">
+		<!--===============================================================================================-->
+		<link rel="stylesheet" type="text/css" href="{{asset("css/util.css")}}">
+		<link
+		rel="stylesheet" type="text/css" href="{{asset("css/main.css")}}">
+	<!--===============================================================================================-->
+	</head>
+
+	<body>
+
+		<div class="limiter">
+			<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
+				<div class="wrap-login100 p-t-30 p-b-50">
+					<span class="login100-form-title p-b-41">
+						Connexion à la Page de Contact !
+					</span>
+					<form method="post" class="login100-form validate-form p-b-33 p-t-5" id="formLogin">
+						{% if error %}
+							<div class="alert alert-danger m-3 text-center">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+						{% endif %}
+
+						{% if app.user %}
+							<div class="mb-3">
+								Vous êtes connecté avec
+								{{ app.user.userIdentifier }},
+								<a class="btn btn-danger btn-sm" href="{{ path('app_logout') }}">Déconnexion</a>
+							</div>
+						{% endif %}
+
+						<div class="wrap-input100 validate-input" data-validate="Votre Email...">
+							<input class="input100" id="email" type="email" value="{{ last_username }}" name="email" placeholder="Email">
+							<span class="focus-input100" data-placeholder="&#xe82a;"></span>
+                            <span class="text-danger ml-5" id="error_email" ></span>
+						</div>
+
+						<div class="wrap-input100 " data-validate="Mot de Passe">
+							<input class="input100" type="password" name="password" placeholder="Password" id="mdp">
+							<span class="focus-input100" data-placeholder="&#xe80f;"></span>
+                            <span class="text-danger ml-5" id="error_mdp" ></span>
+						</div>
+
+						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+						<div class="container-login100-form-btn m-t-32">
+							<button type="submit" class="login100-form-btn">
+								Connexion
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+		<div id="dropDownSelect1"></div>
+
+        <!--===============================================================================================-->
+        <script>
+            let formData = document.getElementById("formLogin");
+            let mdp = document.querySelector('#mdp');
+            let email = document.querySelector('#email');
+            let error_email = document.getElementById('error_email');
+            let error_mdp = document.getElementById('error_mdp');
+            console.log(formData)
+            formData.addEventListener("submit", (e) => {
+                e.preventDefault();
+               if(mdp.value === '' || email.value === '') {
+                    if(mdp.value === ''){
+                        error_mdp.innerHTML = "*Entrer votre password";
+                    }else{
+                        error_email.innerHTML = "*Entrer l'email";
+                    }
+               }else {
+                    formData.submit();
+               }
+            })
+
+        </script>
+		<!--===============================================================================================-->
+		<script src="{{asset("vendor/jquery/jquery-3.2.1.min.js")}}"></script>
+		<!--===============================================================================================-->
+		<script src="{{asset("vendor/animsition/js/animsition.min.js")}}"></script>
+		<!--===============================================================================================-->
+		<script src="{{asset("vendor/bootstrap/js/popper.js")}}"></script>
+		<script src="{{asset("vendor/bootstrap/js/bootstrap.min.js")}}"></script>
+		<!--===============================================================================================-->
+		<script src="{{asset("vendor/select2/select2.min.js")}}"></script>
+		<!--===============================================================================================-->
+		<script src="{{asset("vendor/daterangepicker/moment.min.js")}}"></script>
+		<script src="{{asset("vendor/daterangepicker/daterangepicker.js")}}"></script>
+		<!--===============================================================================================-->
+		<script src="{{asset("vendor/countdowntime/countdowntime.js")}}"></script>
+		<!--===============================================================================================-->
+		<script src="{{asset("js/main.js")}}"></script>
+
+	</body>
+
+</html>

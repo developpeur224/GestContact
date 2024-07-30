@@ -1,0 +1,30 @@
+{{ form_start(form, {'attr': {'action': {{path('app_user_update')}}, 'method': 'post', 'novalidate': 'novalidate'}}) }}
+    <div class="row g-2 mb-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control',}}) }}
+                <label for="nom">Nom</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control',}}) }}
+                <label for="prenom">Prénom</label>
+            </div>
+        </div>
+    </div>
+    <div class="row g-2 mb-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                <label for="email">Email</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                <label for="telephone">Téléphone</label>
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}

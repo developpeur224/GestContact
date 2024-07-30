@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Liste des Contacts !
+			{% endblock %}
+		</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+		<link href="https://cdn.datatables.net/v/bs5/dt-2.0.8/datatables.min.css" rel="stylesheet"> {% block stylesheets %}{% endblock %}
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+	</head>
+	<body>
+		<header>
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<div class="container-fluid">
+					{% if app.user %}
+						<span class="navbar-brand" id="profil">
+							<i class="fas fa-user-secret"></i>
+							{{app.user.nom}}
+						</span>
+					{% else %}
+						<a class="navbar-brand" href="{{path('app_contact_index')}}">
+							<i class="fas fa-home"></i>
+							CONTACT
+						</a>
+					{% endif %}
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+							{% if is_granted('ROLE_ADMIN') %}
+								<li class="nav-item">
+									<a class="nav-link {{app.current_route == 'app_user_index' ? 'active text-primary' : ''}}" aria-current="page" href="{{path('app_user_index')}}">Utilisateurs</a>
+								</li>
+							{% endif %}
+							{% if app.user %}
+								<li class="nav-item">
+									<a class="nav-link {{app.current_route == 'app_contact_index' ? 'active text-primary' : ''}} " aria-current="page" href="{{path('app_contact_index')}}">Contacts</a>
+								</li>
+							{% endif %}
+
+						</ul>
+						<div class="d-flex">
+							{% if app.user %}
+								<a href="{{path('app_logout')}}" class="btn btn-secondary me-2">Déconnexion</a>
+							{% else %}
+								<a href="{{path('app_login')}}" class="btn btn-success me-2" type="submit">Connexion</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</nav>
+		</header>
+		<div class="container"> {% block body %}{% endblock %}
+			{% if app.user %}
+
+				<!-- Show Profil Modal -->
+				<div class="modal fade" id="profilUser" tabindex="-1" aria-labelledby="profilModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Profile</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div class="container">
+									<div class="row mb-3">
+										<div class="col-md-4">
+											<strong>Identifiant :</strong>
+										</div>
+										<div class="col-md-8">{{app.user.id}}</div>
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-4">
+											<strong>Nom :</strong>
+										</div>
+										<div class="col-md-8 nomUser">{{app.user.nom}}</div>
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-4">
+											<strong>Prénom :</strong>
+										</div>
+										<div class="col-md-8 prenomUser">{{app.user.prenom}}</div>
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-4">
+											<strong>Email :</strong>
+										</div>
+										<div class="col-md-8 emailUser">{{app.user.email}}</div>
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-4">
+											<strong>Téléphone :</strong>
+										</div>
+										<div class="col-md-8 telephoneUser">{{app.user.telephone}}</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer d-flex justify-content-between">
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+									<i class="fas fa-close"></i>
+									Annuler</button>
+								<button type="button" class="btn btn-primary" id="btnUpdate">Modifier
+									<i class="fas fa-edit"></i>
+									<span id="profilSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Modifier Profil Modal -->
+				<div class="modal fade" id="profilUpdateUser" tabindex="-1" aria-labelledby="profilModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Modification du Profil</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form action="" method="post" id="formUpdateUserOrder" novalidate>
+									<div class="row g-2 mb-3">
+										<div class="col-md">
+											<div class="d-none" id="idUpdateUser">
+												{{app.user.id}}
+											</div>
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control nomUser" id="nomUserUpdate" name="nom" value="{{app.user.nom}}" required>
+												<label for="nom">Nom</label>
+											</div>
+										</div>
+										<div class="col-md">
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control prenomUser" id="prenomUserUpdate" name="prenom" value="{{app.user.prenom}}" required>
+												<label for="prenom">Prénom</label>
+											</div>
+										</div>
+									</div>
+									<div class="row g-2 mb-3">
+										<div class="col-md">
+											<div class="form-floating mb-3">
+												<input type="email" class="form-control" id="emailUserUpdate" name="email" value="{{app.user.email}}" readonly disabled>
+												<label for="email">Email</label>
+											</div>
+										</div>
+										<div class="col-md">
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control telephoneUser" id="telephoneUserUpdate" name="telephone" value="{{app.user.telephone}}" required>
+												<label for="telephone">Telephone</label>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer d-flex justify-content-between">
+								<button type="button" class="btn btn-danger" id="retourUser">
+									<i class="fas fa-arrow-left"></i>
+									Retour</button>
+								<button type="button" class="btn btn-primary updateUser" id="updateUser">Mise à Jour
+									<i id="iconEditUser" class="fas fa-sync"></i>
+									<span id="profilUserSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+
+		</div>
+		<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-2.0.8/datatables.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+		<script src="{{asset('script.js')}}"></script>
+		{% block javascripts %}{% endblock %}
+	</body>
+</html>

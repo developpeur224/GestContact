@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion à la plateforme de Contact</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="alert alert-success" role="alert">
+      <h1>Avis de connexion de la plateforme de Contact !</h1>
+    </div>
+    <h1 class="text-center">Votre connexion est active !</h1>
+    <h3 class="text-center">Vuillez-vous connecté avec ses informations suivants</h3>
+    <ul class="list-unstyled">
+      <li>Email : {{ data['email'] }}</li>
+      <li>Mot de pass : {{ data['password'] }}</li>
+    </ul>
+    <p class="text-success text-center">
+      <strong>NB</strong> : Connexion de user !
+    </p>
+    <button class="btn btn-primary btn-lg">
+      <a href="{{url('app_login')}}" class="text-white">SE CONNECTER</a>
+    </button>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

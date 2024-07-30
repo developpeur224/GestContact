@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Utilisateur
+{% endblock %}
+
+{% block body %}
+
+	<div class="container mt-5">
+		<div class="container-content">
+			<div class="container-header">
+				<h5 class="container-title text-center">Modifier Utilisateur</h5>
+			</div>
+			<div class="container-body">
+				{{ form_start(form, {'attr': {'action': path('app_user_edit', {'id': user.id}), 'method': 'post', 'novalidate': 'novalidate'}}) }}
+				<div class="row g-2 mb-3">
+					
+					<div class="col-md">
+						<div class="form-floating mb-3">
+							{{ form_widget(form.nom, {'attr': {'class': 'form-control',}}) }}
+							<label for="nom">Nom</label>
+						</div>
+					</div>
+
+					<div class="col-md">
+						<div class="form-floating mb-3">
+							{{ form_widget(form.prenom, {'attr': {'class': 'form-control',}}) }}
+							<label for="prenom">Prénom</label>
+						</div>
+					</div>
+				</div>
+				<div class="row g-2 mb-3">
+					<div class="col-md">
+						<div class="form-floating mb-3">
+							{{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+							<label for="email">Email</label>
+						</div>
+					</div>
+					<div class="col-md">
+						<div class="form-floating mb-3">
+							{{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+							<label for="telephone">Téléphone</label>
+						</div>
+					</div>
+				</div>
+				<div class="col-md d-none ">
+					<div class="form-floating mb-3">
+						{{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+						<label for="telephone">Téléphone</label>
+					</div>
+				</div>
+			</div>
+            <div class="col-md">
+				<div class=" mb-3">
+					<label for="profile">Profile</label>
+					{{ form_widget(form.imageFile, {'attr': {'class': 'form-control',}}) }}
+				</div>
+			</div>
+			<div class=" d-flex justify-content-between">
+				<a href="{{path('app_user_index')}}" class="btn btn-danger retour" data-bs-dismiss="modal">
+					<i class="fa fa-arrow-left"></i>
+					Retour
+				</a>
+				<button type="submit" class="btn btn-primary">
+					Mettre à jour
+					<i class="fas fa-edit"></i>
+				</button>
+
+			</div>
+			{{ form_end(form) }}
+
+		</div>
+
+	</div>
+</div>{% endblock %}
