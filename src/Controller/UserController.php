@@ -89,6 +89,7 @@ class UserController extends AbstractController
         ]);
     }
 
+    //La fonction qui permet d'afficher les informations d'un utilisateur
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
@@ -97,6 +98,7 @@ class UserController extends AbstractController
        ]);
     }
 
+    //La fonction qui permet d'éditer les informations d'un utilisateur
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
@@ -198,7 +200,7 @@ class UserController extends AbstractController
                    'success',
                    'Mot de pass modifier avec succès '
                 );
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_contact_index', [], Response::HTTP_SEE_OTHER);
             } else {
                 $this->addFlash(
                    'error',
