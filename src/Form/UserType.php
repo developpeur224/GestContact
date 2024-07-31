@@ -18,7 +18,15 @@ class UserType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('telephone')
-            ->add('imageFile', VichImageType::class)
+            ->add('imageFile', VichImageType::class, [
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Changer l\'image',
+                'download_label' => false,
+                'download_uri' => false,
+                'image_uri' => false,
+                'asset_helper' => true,
+            ])
         ;
     }
 

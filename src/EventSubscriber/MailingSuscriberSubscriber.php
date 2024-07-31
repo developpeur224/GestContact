@@ -57,7 +57,7 @@ class MailingSuscriberSubscriber implements EventSubscriberInterface
     {
         return [
             ContacterNousRequestEvent::class => 'onContacterNousRequestEvent',
-            InteractiveLoginEvent::class => 'onLogin',
+            // InteractiveLoginEvent::class => 'onLogin',
             UserAuthEvent::class => 'onUserAuthEvent',
         ];
     }

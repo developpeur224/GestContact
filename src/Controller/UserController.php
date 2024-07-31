@@ -5,27 +5,24 @@ namespace App\Controller;
 use App\Entity\Contact;
 use App\Entity\User;
 use App\EventSubscriber\UserAuthEvent;
+use App\Form\UserPasswordType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Random\Randomizer;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\ByteString;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[IsGranted('ROLE_ADMIN')]
 #[Route('/user')]
 class UserController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/', name: 'app_user_index', methods: ['GET', 'POST'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -34,6 +31,7 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
@@ -71,7 +69,14 @@ class UserController extends AbstractController
                 $password
             )
         );
+            if($user->getImageName() == null){
+                $user->setImageName('profile.png');
+            }
 
+            $this->addFlash(
+               'success',
+               'Utilisateurs ajouter avec succès !'
+            );
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -102,8 +107,15 @@ class UserController extends AbstractController
 
             // Traitez le fichier uploadé
             $user->setImageFile($form->get('imageFile')->getData());
-            
+            if($user->getImageName() == null){
+                $user->setImageName('profile.png');
+            }
             $entityManager->flush();
+
+            $this->addFlash(
+               'success',
+               'Utilisateurs modifier avec succès !'
+            );
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -114,6 +126,7 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/delete/{id}', name: 'app.delete.user', methods: ['POST', 'GET'])]
     public function supprimer(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -161,5 +174,43 @@ class UserController extends AbstractController
         
         }
         return new JsonResponse(['status' => 'error', 'message' => 'Formulaire non valide']);
+    }
+
+    #[Route('/edit/password', name: 'app_user_edit_password', methods: ['POST', 'GET'])]
+    public function edit_password(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof PasswordAuthenticatedUserInterface) {
+            throw new \LogicException('Utilisateur non trouvé ou utilisateur ne supporte pas les mots de passe.');
+        }
+        $form = $this->createForm(UserPasswordType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            $newPassword = $form->get('newPassword')->getData();
+            $hashedPassword = $hasher->hashPassword($user, $newPassword);
+            
+            if ($hasher->isPasswordValid($user, $plainPassword)) {
+                $user->password = $hashedPassword;
+                $em->flush();
+                $this->addFlash(
+                   'success',
+                   'Mot de pass modifier avec succès '
+                );
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                $this->addFlash(
+                   'error',
+                   'Mot de pass saisie est incorrect !'
+                );
+                return $this->redirectToRoute('app_user_edit_password');
+            }
+        }
+        
+
+       return $this->render('user/edit_password.html.twig',[
+        'form' => $form->createView(),
+       ]);
     }
 }

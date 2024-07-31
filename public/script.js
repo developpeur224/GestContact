@@ -447,7 +447,7 @@ $(document).ready(function() {
         }
     
         var row = dataTables.row.add([
-            1,
+            0,
             contact.nom,
             contact.prenom,
             contact.telephone,

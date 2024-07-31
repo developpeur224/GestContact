@@ -94,27 +94,7 @@ class ContactController extends AbstractController
 
             // Récupérer le nombre total d'éléments après l'ajout
             $nbAllElements = $contactRepository->count([]);
-            $data = [];
-            $roleUser = $this->getUser()->getRoles()[0];
-            if ($roleUser == "ROLE_USER") {
-                $contacts = $contactRepository->findAllOrderedByUpdateDate(true, $user);
-            } else {
-                $contacts = $contactRepository->findAllOrderedByUpdateDate();
-            }
-            foreach ($contacts as $contact) {
-                $data[] = [
-                    'id' => $contact->getId(),
-                    'nom' => $contact->getNom(),
-                    'prenom' => $contact->getPrenom(),
-                    'email' => $contact->getEmail(),
-                    'telephone' => $contact->getTelephone(),
-                    'address' => $contact->getAddress(),
-                    'creerContact' => $contact->getCreerContact()->format('Y-m-d H:i:s'),
-                    'miseAJourContact' => $contact->getMiseAJourContact()->format('Y-m-d H:i:s'),
-                    'categorie' => $contact->getCategorie() ? $contact->getCategorie()->getNom () : null,
-                    'user' => $contact->getUser() ? $contact->getUser()->getEmail() : null
-                ];
-            }
+            
 
             // Retourner une réponse JSON avec les détails du contact ajouté
             return new JsonResponse([

@@ -16,7 +16,7 @@
 				<div class="container-fluid">
 					{% if app.user %}
 						<span class="navbar-brand" id="profil">
-						<img width="35px" height="35px" src="{{ asset('images/profiles/' ~ (app.user.imageName is not null ? app.user.imageName : 'profile.png')) }}" class="rounded-circle">
+							<img width="35px" height="35px" src="{{ asset('images/profiles/' ~ (app.user.imageName is not null ? app.user.imageName : 'profile.png')) }}" class="rounded-circle">
 							{{app.user.nom}}
 						</span>
 					{% else %}
@@ -25,7 +25,7 @@
 							CONTACT
 						</a>
 					{% endif %}
-					
+
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
@@ -39,6 +39,9 @@
 							{% if app.user %}
 								<li class="nav-item">
 									<a class="nav-link {{app.current_route == 'app_contact_index' ? 'active text-primary' : ''}} " aria-current="page" href="{{path('app_contact_index')}}">Contacts</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link {{app.current_route == 'app_categorie_index' ? 'active text-primary' : ''}} " aria-current="page" href="{{path('app_categorie_index')}}">Catégories</a>
 								</li>
 							{% endif %}
 
@@ -54,6 +57,18 @@
 				</div>
 			</nav>
 		</header>
+
+		<div class="container d-fex justify-content-center align-items-center">
+			{% for type, messages in app.session.flashbag.all() %}
+				{% for message in messages %}
+					<div id="flash-message" class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
+		</div>
+
 		<div class="container"> {% block body %}{% endblock %}
 			{% if app.user %}
 
@@ -67,6 +82,17 @@
 							</div>
 							<div class="modal-body">
 								<div class="container">
+									<div
+										class="d-flex justify-content-center align-items-center position-relative">
+										<!-- Icône de modification -->
+										<a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="btn btn-light btn-sm position-absolute" style="left: 250px; top: 90%; transform: translateY(-50%); z-index: 1;">
+											<i class="fas fa-edit"></i>
+										</a>
+										<!-- Image de profil -->
+										<img width="100px" height="100px" src="{{ asset('images/profiles/' ~ (app.user.imageName is not null ? app.user.imageName : 'profile.png')) }}" alt="Profile Picture">
+									</div>
+
+
 									<div class="row mb-3">
 										<div class="col-md-4">
 											<strong>Identifiant :</strong>
@@ -97,6 +123,10 @@
 										</div>
 										<div class="col-md-8 telephoneUser">{{app.user.telephone}}</div>
 									</div>
+								</div>
+								<div class="d-flex justify-content-end">
+
+									<a href="{{path('app_user_edit_password')}}" class="btn btn-secondary btn-sm" id="changedPassword">Change le mot de pass</a>
 								</div>
 							</div>
 							<div class="modal-footer d-flex justify-content-between">
@@ -154,6 +184,7 @@
 										</div>
 									</div>
 								</form>
+
 							</div>
 							<div class="modal-footer d-flex justify-content-between">
 								<button type="button" class="btn btn-danger" id="retourUser">
@@ -176,6 +207,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 		<script src="{{asset('script.js')}}"></script>
+
 		{% block javascripts %}{% endblock %}
 	</body>
 </html>
