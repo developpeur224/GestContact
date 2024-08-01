@@ -10,7 +10,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Serializer\Annotation\Ignore;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -49,17 +48,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100)]
     public ?string $telephone = null;
 
-     /**
-     * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     */
-    #[Vich\UploadableField(mapping: 'utilisateurs', fileNameProperty: 'imageName', size: 'imageSize')]
-    #[Assert\File(
-        maxSize: '1024k',
-        mimeTypes: ['image/jpeg', 'image/png'],
-        mimeTypesMessage: 'Please upload a valid image (JPEG, PNG).'
-    )]
-    #[Ignore()]
-    private ?File $imageFile = null;
+    //  /**
+    //  * NOTE: This is not a mapped field of entity metadata, just a simple property.
+    //  */
+    // #[Vich\UploadableField(mapping: 'utilisateurs', fileNameProperty: 'imageName', size: 'imageSize')]
+    // #[Assert\File(
+    //     maxSize: '1024k',
+    //     mimeTypes: ['image/jpeg', 'image/png'],
+    //     mimeTypesMessage: 'Please upload a valid image (JPEG, PNG).'
+    // )]     
+    // private ?File $imageFile = null;
  
      #[ORM\Column(nullable: true)]
      private ?string $imageName = null;
@@ -121,13 +119,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return array_unique($roles);
-    }
-
-    public function serialize()
-    {
-        return serialize(array(
-            $this->imageFile,
-        ));
     }
 
     /**
@@ -200,15 +191,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function setImageFile(?File $imageFile = null): void
-    {
-        $this->imageFile = $imageFile;
-    }
+    // public function setImageFile(?File $imageFile = null): void
+    // {
+    //     $this->imageFile = $imageFile;
+    // }
 
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
+    // public function getImageFile(): ?File
+    // {
+    //     return $this->imageFile;
+    // }
 
     public function setImageName(?string $imageName): void
     {

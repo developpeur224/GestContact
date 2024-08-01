@@ -69,13 +69,21 @@ class UserController extends AbstractController
                 $password
             )
         );
-            if($user->getImageName() == null){
-                $user->setImageName('profile.png');
+             /**
+             * @var UploadedFile $file
+             */
+            $file = $form->get('imageFile')->getData();
+            if($file){
+                $fileName = $user->getId().'-'.$user->getNom().'.'.$file->getClientOriginalExtension();
+                $file->move($this->getParameter('kernel.project_dir').'/public/images/profiles', $fileName);
+                $user->setImageName($fileName);
             }
+            
+            
 
             $this->addFlash(
                'success',
-               'Utilisateurs ajouter avec succès !'
+               'Utilisateurs ajouter avec succès Et un email a été envoyer!'
             );
             $entityManager->persist($user);
             $entityManager->flush();
@@ -106,12 +114,17 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            // Traitez le fichier uploadé
-            $user->setImageFile($form->get('imageFile')->getData());
-            if($user->getImageName() == null){
-                $user->setImageName('profile.png');
+            /**
+             * @var UploadedFile $file
+             */
+            $file = $form->get('imageFile')->getData();
+            if($file){
+                $fileName = $user->getId().'-'.$user->getNom().'.'.$file->getClientOriginalExtension();
+                $file->move($this->getParameter('kernel.project_dir').'/public/images/profiles', $fileName);
+                $user->setImageName($fileName);
             }
+           
+        
             $entityManager->flush();
 
             $this->addFlash(
